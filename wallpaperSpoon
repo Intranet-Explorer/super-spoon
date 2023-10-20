@@ -1,0 +1,22 @@
+$targetComputer = "\\FriendComputerName"
+$wallpaperImagePath = "C:\Path\To\FunnyWallpaper.jpg"
+
+# Continuously open and close the CD/DVD drive
+While ($true) {
+    Invoke-Command -ComputerName $targetComputer -ScriptBlock {
+        $cdDrive = New-Object -ComObject "WMPlayer.OCX.7"
+        $cdDrive.cdromCollection.Item(0).Eject()
+        Start-Sleep -Seconds 1
+        $cdDrive.cdromCollection.Item(0).Eject()
+    }
+    
+    # Change the desktop wallpaper
+    Invoke-Command -ComputerName $targetComputer -ScriptBlock {
+        $wallpaperPath = "$using:wallpaperImagePath"
+        $regKey = "HKCU:\Control Panel\Desktop"
+        Set-ItemProperty -Path $regKey -Name Wallpaper -Value $wallpaperPath
+        rundll32.exe user32.dll, UpdatePerUserSystemParameters
+    }
+
+    Start-Sleep -Seconds 10  # Adjust timing as desired
+}
