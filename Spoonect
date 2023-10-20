@@ -1,6 +1,4 @@
-Certainly! Here's a PowerShell script that prompts for a computer name and then runs the specified `netsh` commands on that computer remotely:
 
-```powershell
 # Prompt for computer name
 $computerName = Read-Host "Enter the computer name"
 
@@ -25,10 +23,5 @@ if (Test-Connection -ComputerName $computerName -Count 1 -Quiet) {
 else {
     Write-Error "Failed to reach $computerName. Please ensure the computer is online and accessible."
 }
-```
 
-For this script to work:
 
-1. Both the local computer (from where you run the script) and the target computer must have PowerShell remoting enabled (usually through `Enable-PSRemoting`).
-2. You must have the appropriate permissions to connect and execute commands on the remote computer.
-3. Adjustments might be required for environments with special configurations or restrictions.
