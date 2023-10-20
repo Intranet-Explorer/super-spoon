@@ -1,0 +1,24 @@
+Add-Type -AssemblyName System.speech
+$synth = New-Object -TypeName System.Speech.Synthesis.SpeechSynthesizer
+
+# Function to perform Text-To-Speech
+function SpeakText {
+    param ($textToSpeak)
+
+    Add-Type -AssemblyName System.speech
+    $synthRemote = New-Object -TypeName System.Speech.Synthesis.SpeechSynthesizer
+    $synthRemote.Speak($textToSpeak)
+}
+
+# Ask for computer name
+$computerName = Read-Host "Enter the computer name (or leave blank for this computer)"
+
+# Ask for text
+$text = Read-Host "Please enter the text you want spoken"
+
+# If computer name is not empty, use Invoke-Command to run on remote machine
+if ($computerName) {
+    Invoke-Command -ComputerName $computerName -ScriptBlock ${function:SpeakText} -ArgumentList $text
+} else {
+    $synth.Speak($text)
+}
