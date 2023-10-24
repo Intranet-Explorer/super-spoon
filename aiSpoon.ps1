@@ -1,5 +1,3 @@
-PowerShell Script with GUI for GPT-3.5 Turbo Interaction
-
 Add-Type -AssemblyName System.Windows.Forms
 
 # Your OpenAI API key
