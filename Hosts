@@ -1,0 +1,25 @@
+# Define the hosts and IPs you want to add
+$hostsToAdd = @(
+    "192.168.1.100    host1.example.com",
+    "192.168.1.101    host2.example.com",
+    "192.168.1.102    host3.example.com"
+)
+
+# Path to the hosts file (usually located at C:\Windows\System32\drivers\etc\hosts)
+$hostsFilePath = "C:\Windows\System32\drivers\etc\hosts"
+
+# Check if the hosts file exists
+if (Test-Path -Path $hostsFilePath) {
+    # Ensure there's a newline at the end of the file
+    $content = Get-Content -Path $hostsFilePath
+    if ($content[-1] -notmatch "\r?\n$") {
+        Add-Content -Path $hostsFilePath -Value ""
+    }
+
+    # Append the hosts and IPs to the hosts file
+    Add-Content -Path $hostsFilePath -Value $hostsToAdd
+
+    Write-Host "Hosts added successfully."
+} else {
+    Write-Host "Hosts file not found at $hostsFilePath."
+}
