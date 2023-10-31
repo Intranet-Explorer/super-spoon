@@ -1,0 +1,23 @@
+# Define the path to the hosts file
+$hostsFilePath = "C:\Windows\System32\drivers\etc\hosts"
+
+# Check if the file exists
+if (Test-Path -Path $hostsFilePath -PathType Leaf) {
+    # Read the contents of the hosts file
+    $hostsContent = Get-Content -Path $hostsFilePath
+
+    # Filter and display lines that contain entries (non-commented lines)
+    $entries = $hostsContent | Where-Object { $_ -match '^\s*(\d+\.\d+\.\d+\.\d+)\s+([\w.-]+)' }
+    
+    if ($entries.Count -gt 0) {
+        Write-Host "Entries in the hosts file ($hostsFilePath):"
+        Write-Host "--------------------------------------------"
+        Write-Host $entries
+    }
+    else {
+        Write-Host "No entries found in the hosts file ($hostsFilePath)."
+    }
+}
+else {
+    Write-Host "The hosts file ($hostsFilePath) does not exist."
+}
