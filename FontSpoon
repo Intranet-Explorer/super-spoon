@@ -1,0 +1,28 @@
+# PowerShell Script to Install a Font on Windows
+
+# Define the font file name
+$fontName = "YourFontName.ttf" # Change this to your font's file name
+
+# Define the font paths
+$fontPath = "$PSScriptRoot\$fontName"
+$fontsFolder = "$env:windir\Fonts"
+
+# Check if the font is already installed
+if (Test-Path "$fontsFolder\$fontName") {
+    Write-Host "The font is already installed."
+} else {
+    # Copy the font to the Windows fonts directory
+    Copy-Item $fontPath $fontsFolder
+
+    # Add registry entry to make the font available system wide
+    $registryPath = "HKLM:\SOFTWARE\Microsoft\Windows NT\CurrentVersion\Fonts"
+    $fontRegName = $fontName -replace '\.ttf$', ' (TrueType)'
+    Set-ItemProperty -Path $registryPath -Name $fontRegName -Value $fontName
+
+    Write-Host "The font has been installed."
+}
+
+# Refresh the font cache
+(New-Object -ComObject Shell.Application).Namespace(0x14).Self.InvokeVerb("Refresh")
+
+Write-Host "The system may require a restart to complete the font installation."
