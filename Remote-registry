@@ -13,12 +13,12 @@ function Enable-RemoteRegistry {
     # Check if the computer is reachable
     if (Test-Connection -ComputerName $ComputerName -Count 2 -Quiet) {
         try {
-            # Get the RemoteRegistry service
-            $service = Get-Service -Name RemoteRegistry -ComputerName $ComputerName -ErrorAction Stop
+            # Get the RemoteRegistry service using CIM
+            $service = Get-CimInstance -ClassName Win32_Service -Filter "Name='RemoteRegistry'" -ComputerName $ComputerName
 
             # Start the service if it is not already running
-            if ($service.Status -ne 'Running') {
-                Start-Service -InputObject $service
+            if ($service.State -ne 'Running') {
+                Invoke-CimMethod -InputObject $service -MethodName StartService
                 Write-Host "Remote Registry service is now enabled on $ComputerName."
             } else {
                 Write-Host "Remote Registry service is already running on $ComputerName."
