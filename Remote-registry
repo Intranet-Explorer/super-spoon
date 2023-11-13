@@ -1,4 +1,10 @@
 function Enable-RemoteRegistry {
+    # Check for administrative privileges
+    if (-not ([Security.Principal.WindowsPrincipal][Security.Principal.WindowsIdentity]::GetCurrent()).IsInRole([Security.Principal.WindowsBuiltInRole]::Administrator)) {
+        Write-Host "You need to run this script as an Administrator."
+        return
+    }
+
     param(
         [string]$ComputerName = $(Read-Host "Enter the remote computer name")
     )
