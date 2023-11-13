@@ -1,0 +1,32 @@
+function Enable-RemoteRegistry {
+    param(
+        [string]$ComputerName = $(Read-Host "Enter the remote computer name")
+    )
+
+    # Confirmation
+    $confirmation = Read-Host "Are you sure you want to enable the Remote Registry service on $ComputerName? (Y/N)"
+    if ($confirmation -ne 'Y') {
+        Write-Host "Operation cancelled."
+        return
+    }
+
+    # Check if the computer is reachable
+    if (Test-Connection -ComputerName $ComputerName -Count 2 -Quiet) {
+        try {
+            # Get the RemoteRegistry service
+            $service = Get-Service -Name RemoteRegistry -ComputerName $ComputerName -ErrorAction Stop
+
+            # Start the service if it is not already running
+            if ($service.Status -ne 'Running') {
+                Start-Service -InputObject $service
+                Write-Host "Remote Registry service is now enabled on $ComputerName."
+            } else {
+                Write-Host "Remote Registry service is already running on $ComputerName."
+            }
+        } catch {
+            Write-Host "Error: $_"
+        }
+    } else {
+        Write-Host "Cannot connect to $ComputerName. Please check the computer name and ensure it is reachable."
+    }
+}
