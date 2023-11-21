@@ -1,0 +1,35 @@
+# Fonts to be checked and installed
+$fontsToInstall = @(
+    "Font1.ttf",
+    "Font2.ttf",
+    "Font3.ttf",
+    "Font4.ttf",
+    "Font5.ttf"
+)
+
+# Loop through each font
+foreach ($font in $fontsToInstall) {
+    # Check if the font is installed
+    $fontExists = Get-ChildItem -Path "C:\Windows\Fonts" -Recurse | Where-Object {$_.Name -eq $font}
+
+    if ($fontExists) {
+        Write-Host "Font $font is already installed."
+    }
+    else {
+        # Install the font system-wide
+        $tempPath = [System.IO.Path]::GetTempPath()
+        $installPath = Join-Path -Path $tempPath -ChildPath $font
+        $fontFilePath = Join-Path -Path $PSScriptRoot -ChildPath $font
+
+        # Copy the font file to a temporary location
+        Copy-Item -Path $fontFilePath -Destination $installPath -Force
+
+        # Register the font system-wide
+        $fontsFolder = [System.Environment]::GetFolderPath('Fonts')
+        $shell = New-Object -ComObject Shell.Application
+        $fontFile = $shell.Namespace($installPath).Items().Item($font)
+        $shell.Namespace($fontsFolder).CopyHere($fontFile)
+
+        Write-Host "Font $font has been installed and registered system-wide."
+    }
+}
