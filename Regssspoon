@@ -1,0 +1,24 @@
+# Define the registry path, name, and values
+$registryPath = "HKCU:\Software\MySoftware" # Example path, change as needed
+$registryName = "SettingName" # Example setting name, change as needed
+$oldValue = "OldValue" # The old value you're checking for, change as needed
+$newValue = "NewValue" # The new value you want to set, change as needed
+
+# Check if the path exists
+if (Test-Path $registryPath) {
+    # Path exists, check if the name and value are what we're looking for
+    if ((Get-ItemProperty -Path $registryPath -Name $registryName -ErrorAction SilentlyContinue).$registryName -eq $oldValue) {
+        # Value matches, update it
+        Set-ItemProperty -Path $registryPath -Name $registryName -Value $newValue
+        Write-Host "Value updated."
+    } else {
+        # Name/value doesn't exist or doesn't match, create or update it
+        Set-ItemProperty -Path $registryPath -Name $registryName -Value $newValue
+        Write-Host "Value set."
+    }
+} else {
+    # Path doesn't exist, create it and add the name/value
+    New-Item -Path $registryPath -Force
+    New-ItemProperty -Path $registryPath -Name $registryName -Value $newValue -PropertyType String
+    Write-Host "Registry path and value created."
+}
